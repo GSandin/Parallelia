@@ -6,14 +6,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.parallelia.gustavo.parallelia.R;
 
 /**
  * Created by gustavo on 28/12/14.
  */
-public class ScreenSlidePageFragment extends Fragment {
+public class ScreenSlideKNN2Fragment extends Fragment {
 
     /**
      * Key to insert the background color into the mapping of a Bundle.
@@ -38,10 +37,10 @@ public class ScreenSlidePageFragment extends Fragment {
      *            index page
      * @return a new page
      */
-    public static ScreenSlidePageFragment newInstance(int color, int index) {
+    public static ScreenSlideKNN2Fragment newInstance(int color, int index) {
 
         // Instantiate a new fragment
-        ScreenSlidePageFragment fragment = new ScreenSlidePageFragment();
+        ScreenSlideKNN2Fragment fragment = new ScreenSlideKNN2Fragment();
 
         // Save the parameters
         Bundle bundle = new Bundle();
@@ -72,11 +71,11 @@ public class ScreenSlidePageFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_screen_slide_page, container, false);
+                R.layout.fragment_screen_knn_page, container, false);
 
         // Show the current page index in the view
-        TextView tvIndex = (TextView) rootView.findViewById(R.id.tvIndex);
-        tvIndex.setText(String.valueOf(this.index));
+//        TextView tvIndex = (TextView) rootView.findViewById(R.id.tvIndex);
+  //      tvIndex.setText(String.valueOf(this.index));
 
         // Change the background color
         rootView.setBackgroundColor(this.color);

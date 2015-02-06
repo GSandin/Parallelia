@@ -7,11 +7,11 @@ import android.graphics.Bitmap;
  */
 public class KNN_Vector {
     //atributos
-    private String label;
+    private float label;
     private int[] eigenvector;
 
-    public KNN_Vector(Bitmap image, String label){
-        this.setLabal(label);
+    public KNN_Vector(Bitmap image, float label){
+        this.label = label;
         this.eigenvector = new int[image.getWidth()*image.getHeight()];
         //copy pixel data from the Bitmap into the 'intArray' array
         image.getPixels(this.eigenvector, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
@@ -19,11 +19,11 @@ public class KNN_Vector {
     }
 
 
-    public String getLabal() {
+    public float getLabel() {
         return label;
     }
 
-    public void setLabal(String label) {
+    public void setLabel(float label) {
         this.label = label;
     }
 
