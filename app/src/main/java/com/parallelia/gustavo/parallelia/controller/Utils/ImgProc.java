@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.controller;
+package com.parallelia.gustavo.parallelia.controller.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -1,6 +1,10 @@
-package com.parallelia.gustavo.parallelia.NoParallel;
+package com.parallelia.gustavo.parallelia.Parallel;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
 
 import com.parallelia.gustavo.parallelia.controller.exception.KNNException;
 import com.parallelia.gustavo.parallelia.model.KNN_Vector;
@@ -8,21 +12,32 @@ import com.parallelia.gustavo.parallelia.model.KNN_Vector;
 import java.util.ArrayList;
 
 /**
- * Created by gustavo on 15/01/15.
+ * Created by gustavo on 6/02/15.
  */
-public class KNN {
+public class KNNP {
+    // RenderScript-specific properties:
+    // RS context
+    private RenderScript rs;
+    // "Glue" class that wraps access to the script.
+    // The IDE generates the class automatically based on the rs file, the class is located in the 'gen'
+    // folder.
+    private ScriptC_knn script;
+    // Allocations - memory abstractions that RenderScript kernels operate on.
+    private Allocation allocationIn;
+    private Allocation allocationOut;
+
     //atributtes
     private int max_k;
     private ArrayList<KNN_Vector> samples;
     private int var_count;
 
-    public KNN() {
+    public KNNP() {
         this.var_count = 0;
         this.max_k = 32;
         this.samples = new ArrayList<KNN_Vector>();
     }
 
-    public KNN(int max_k) {
+    public KNNP(int max_k) {
         this.max_k = max_k;
         this.var_count = 0;
         this.samples = new ArrayList<KNN_Vector>();
@@ -68,7 +83,7 @@ public class KNN {
         return true;
     }
 
-    public float find_nearest(int k, ArrayList<KNN_Vector> test_data,String[] results) throws KNNException {
+    public float find_nearest(int k, ArrayList<KNN_Vector> test_data,String[] results, Context context) throws KNNException {
         if (samples.size() <= 0) {
             throw new KNNException("The KNN classifer is not ready for find neighbord!");
         }
@@ -77,10 +92,39 @@ public class KNN {
             throw new KNNException("k must be within 1 and max_k range.");
         }
 
-        int k1 = 0, k2 = 0;
-        results = new String[test_data.size()];
+        float temp_result[] = new float[samples.size()];
 
-        for (int s = 0; s < test_data.size(); s++) {
+        //results = new String[test_data.size()];
+        //renderscript
+        rs = RenderScript.create(context);
+        script = new ScriptC_knn(rs);
+
+        //create allocations
+        allocationIn = Allocation.createSized(rs, Element.I32(rs),this.var_count);
+        allocationIn.copyTo(testdatatoAllocation(test_data));
+
+        allocationOut = Allocation.createSized(rs, Element.U8(rs),test_data.size());
+
+        Allocation samples_a = Allocation.createSized(rs,Element.F32(rs),this.var_count*this.samples.size());
+        samples_a.copyTo(samplestoAllocationO());
+
+        Allocation tags = Allocation.createSized(rs,Element.I32(rs),test_data.size());
+        tags.copyTo(tagstoAllocation());
+
+        //set globals variables
+        script.set_k(k);
+        script.set_len_results(test_data.size());
+        script.set_len_samples(samples.size());
+        script.set_var_count(this.var_count);
+        script.bind_samples(samples_a);
+        script.bind_tags(tags);
+
+        //run parallel knn
+        script.forEach_root(allocationIn, allocationOut);
+        //recolect results
+        allocationOut.copyTo(temp_result);
+
+        /*for (int s = 0; s < test_data.size(); s++) {
             KNN_Vector test = test_data.get(s);
             System.out.println(test.getLabel());
             int dd[] = new int[k];
@@ -150,7 +194,47 @@ public class KNN {
             }
             System.out.println(best_val);
             results[s] = String.valueOf(best_val);
-        }
+        }*/
         return 0;
+    }
+
+    private int[] samplestoAllocationO(){
+        int samples[] = new int[this.var_count*this.samples.size()];
+        int a=0;
+
+        for(int i=0;i<this.samples.size();i++){
+            KNN_Vector kn =this.samples.get(i);
+            for(int j=0;j<this.var_count;j++){
+                samples[a] = kn.getEigenvector()[j];
+                a++;
+            }
+        }
+
+        return samples;
+    }
+
+    private float[] tagstoAllocation(){
+        float tags[] = new float[this.samples.size()];
+
+        for(int i=0;i<this.samples.size();i++){
+            tags[i] = this.samples.get(i).getLabel();
+        }
+
+        return tags;
+    }
+
+    private int[] testdatatoAllocation(ArrayList<KNN_Vector> test_data){
+        int td[] = new int[this.var_count*test_data.size()];
+        int a = 0;
+
+        for(int i=0;i<test_data.size();i++){
+            KNN_Vector kn = test_data.get(i);
+            for(int j=0;j<this.var_count;j++){
+                td[a] = kn.getEigenvector()[j];
+                a++;
+            }
+        }
+
+        return td;
     }
 }

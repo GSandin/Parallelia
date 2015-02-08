@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
-import com.parallelia.gustavo.parallelia.NoParallel.KNN;
+import com.parallelia.gustavo.parallelia.Parallel.KNNP;
 import com.parallelia.gustavo.parallelia.R;
 import com.parallelia.gustavo.parallelia.controller.Utils.ImgProc;
 import com.parallelia.gustavo.parallelia.controller.exception.KNNException;
@@ -15,13 +15,13 @@ import com.parallelia.gustavo.parallelia.view.Fragment.ScreenSlideKNNFragment;
 import java.util.ArrayList;
 
 /**
- * Created by gustavo on 2/02/15.
+ * Created by gustavo on 8/02/15.
  */
-public class Classifier extends AsyncTask<Context,Void,Void> {
+public class ClassifierP extends AsyncTask<Context,Void,Void> {
 
     private ScreenSlideKNNFragment fragment;
 
-    public Classifier(ScreenSlideKNNFragment fragment){
+    public ClassifierP(ScreenSlideKNNFragment fragment){
         this.fragment = fragment;
     }
 
@@ -46,7 +46,7 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
             }
         }
 
-        KNN cl = new KNN();
+        KNNP cl = new KNNP();
 
         if(cl.train(images_data,responses)){
             System.out.println("KNN entrenado");
@@ -61,7 +61,7 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
             }
 
             try {
-                cl.find_nearest(5, images_test, results);
+                cl.find_nearest(5, images_test, results,context[0]);
             } catch (KNNException e) {
                 e.printStackTrace();
             }
@@ -70,12 +70,8 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        fragment.initTimer();
-    }
+    protected void onPreExecute() {fragment.initTimer();}
 
     @Override
-    protected void onPostExecute(Void result) {
-        fragment.finishTimer();
-    }
+    protected void onPostExecute(Void result) {fragment.finishTimer();}
 }

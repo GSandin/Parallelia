@@ -33,7 +33,6 @@ public class ScreenSlideKNNFragment extends Fragment {
     private String n_algorithm = "KNN";
     private ViewGroup rootView;
     long timeInMilliseconds = 0L;
-    long timeSwapBuff = 0L;
     long updatedTime = 0L;
     private long startTime = 0L;
     private TextView timer;
@@ -109,10 +108,14 @@ public class ScreenSlideKNNFragment extends Fragment {
         customHandler.postDelayed(updateTimerThread, 0);
     }
 
+    public void finishTimer(){
+        customHandler.removeCallbacks(updateTimerThread);
+    }
+
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-            updatedTime = timeSwapBuff + timeInMilliseconds;
+            updatedTime = timeInMilliseconds;
             int secs = (int) (updatedTime / 1000);
             int mins = secs / 60;
             int hour = mins / 60;
