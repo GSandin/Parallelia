@@ -2,9 +2,9 @@ package com.parallelia.gustavo.parallelia.Parallel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
+//import android.renderscript.Allocation;
+import android.support.v8.renderscript.*;
+import android.widget.Toast;
 
 import com.parallelia.gustavo.parallelia.controller.exception.KNNException;
 import com.parallelia.gustavo.parallelia.model.KNN_Vector;
@@ -92,7 +92,7 @@ public class KNNP {
             throw new KNNException("k must be within 1 and max_k range.");
         }
 
-        float temp_result[] = new float[samples.size()];
+        float temp_result[] = new float[5];
 
         //results = new String[test_data.size()];
         //renderscript
@@ -100,30 +100,45 @@ public class KNNP {
         script = new ScriptC_knn(rs);
 
         //create allocations
-        allocationIn = Allocation.createSized(rs, Element.I32(rs),this.var_count);
-        allocationIn.copyTo(testdatatoAllocation(test_data));
+        //Type t = new Type.Builder(rs, Element.I32(rs)).setX(5).create();
+        allocationIn = Allocation.createSized(rs, Element.I32(rs),5);
+        //allocationIn = Allocation.createTyped(rs, t);
+        allocationIn.copyFrom(initVector(5));
 
-        allocationOut = Allocation.createSized(rs, Element.U8(rs),test_data.size());
+        allocationOut = Allocation.createSized(rs, Element.F32(rs), 5);
 
-        Allocation samples_a = Allocation.createSized(rs,Element.F32(rs),this.var_count*this.samples.size());
-        samples_a.copyTo(samplestoAllocationO());
+        Allocation samples_a = Allocation.createSized(rs,Element.I32(rs),this.var_count*this.samples.size(), Allocation.USAGE_SCRIPT);
+        samples_a.copy1DRangeFrom(0, samplestoAllocation().length, samplestoAllocation());
+        //samples_a.copyFrom(samplestoAllocation());
 
-        Allocation tags = Allocation.createSized(rs,Element.I32(rs),test_data.size());
-        tags.copyTo(tagstoAllocation());
+        Allocation test_data_a = Allocation.createSized(rs, Element.I32(rs), this.var_count * test_data.size(), Allocation.USAGE_SCRIPT);
+        test_data_a.copy1DRangeFrom(0, test_datatoAllocation(test_data).length, test_datatoAllocation(test_data));
+        //test_data_a.copyFrom(test_datatoAllocation(test_data));
+
+        Allocation tags = Allocation.createSized(rs,Element.F32(rs),test_data.size(), Allocation.USAGE_SCRIPT);
+        tags.copy1DRangeFrom(0, tagstoAllocation().length, tagstoAllocation());
+        //tags.copyFrom(tagstoAllocation());
 
         //set globals variables
         script.set_k(k);
         script.set_len_results(test_data.size());
         script.set_len_samples(samples.size());
         script.set_var_count(this.var_count);
-        script.bind_samples(samples_a);
-        script.bind_tags(tags);
+        script.set_samples(samples_a);
+        script.set_tags(tags);
+        script.set_test_data(test_data_a);
 
         //run parallel knn
-        script.forEach_root(allocationIn, allocationOut);
+        script.forEach_knn(allocationIn, allocationOut);
         //recolect results
         allocationOut.copyTo(temp_result);
 
+        String text = "RS:" + temp_result[0] + " - " + temp_result[3];
+        //int duration = Toast.LENGTH_SHORT;
+
+        //Toast toast = Toast.makeText(context, text, duration);
+        //toast.show();
+        System.out.println(text);
         /*for (int s = 0; s < test_data.size(); s++) {
             KNN_Vector test = test_data.get(s);
             System.out.println(test.getLabel());
@@ -198,7 +213,26 @@ public class KNNP {
         return 0;
     }
 
-    private int[] samplestoAllocationO(){
+    /**
+     * Method to init vector to renderscript
+     * @param n
+     * @return
+     */
+    private int[] initVector(int n){
+        int vector[] = new int[n];
+
+        for(int i=0;i<n;i++){
+            vector[i]=i;
+        }
+
+        return vector;
+    }
+
+    /**
+     * Method to tranform the samples to data for renderscript
+     * @return
+     */
+    private int[] samplestoAllocation(){
         int samples[] = new int[this.var_count*this.samples.size()];
         int a=0;
 
@@ -213,6 +247,30 @@ public class KNNP {
         return samples;
     }
 
+    /**
+     * Method to transform the test data to data for renderscript
+     * @param test_data
+     * @return
+     */
+    private int[] test_datatoAllocation(ArrayList<KNN_Vector> test_data){
+        int td[] = new int[this.var_count*test_data.size()];
+        int a=0;
+
+        for(int i=0;i<test_data.size();i++){
+            KNN_Vector kn =test_data.get(i);
+            for(int j=0;j<this.var_count;j++){
+                td[a] = kn.getEigenvector()[j];
+                a++;
+            }
+        }
+
+        return td;
+    }
+
+    /**
+     * Method to tranform the tags to dara for renderscript
+     * @return
+     */
     private float[] tagstoAllocation(){
         float tags[] = new float[this.samples.size()];
 
@@ -223,18 +281,4 @@ public class KNNP {
         return tags;
     }
 
-    private int[] testdatatoAllocation(ArrayList<KNN_Vector> test_data){
-        int td[] = new int[this.var_count*test_data.size()];
-        int a = 0;
-
-        for(int i=0;i<test_data.size();i++){
-            KNN_Vector kn = test_data.get(i);
-            for(int j=0;j<this.var_count;j++){
-                td[a] = kn.getEigenvector()[j];
-                a++;
-            }
-        }
-
-        return td;
-    }
 }

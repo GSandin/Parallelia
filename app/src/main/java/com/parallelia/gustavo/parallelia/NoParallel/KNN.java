@@ -80,9 +80,8 @@ public class KNN {
         int k1 = 0, k2 = 0;
         results = new String[test_data.size()];
 
-        for (int s = 0; s < test_data.size(); s++) {
+        for (int s = 0; s < 4; s++) {
             KNN_Vector test = test_data.get(s);
-            System.out.println(test.getLabel());
             int dd[] = new int[k];
             float nr[] = new float[results.length+k*this.var_count];
             for (int i = 0; i < samples.size(); i++) {
@@ -151,6 +150,8 @@ public class KNN {
             System.out.println(best_val);
             results[s] = String.valueOf(best_val);
         }
+        String text = "RS:" + results[0] + " - " + results[3];
+        System.out.println(text);
         return 0;
     }
 }
