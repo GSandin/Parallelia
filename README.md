@@ -1,4 +1,4 @@
-Parallelia
+Parallelocr
 ==========
 
-Parallelia is a final career project of computer science that consist in parallelize different algorithms of I.A. in mobile.
+Parallelocr is a final career project of computer science that consist in parallelize different algorithms of O.C.R. in mobile.
