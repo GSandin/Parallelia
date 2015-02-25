@@ -1,27 +1,26 @@
-package com.parallelia.gustavo.parallelia.controller;
+package com.parallelocr.gustavo.parallelocr.controller;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
-import com.parallelia.gustavo.parallelia.NoParallel.KNN;
-import com.parallelia.gustavo.parallelia.R;
-import com.parallelia.gustavo.parallelia.controller.Utils.ImgProc;
-import com.parallelia.gustavo.parallelia.controller.exception.KNNException;
-import com.parallelia.gustavo.parallelia.model.KNN_Vector;
-import com.parallelia.gustavo.parallelia.view.Fragment.ScreenSlideKNNFragment;
+import com.parallelocr.gustavo.parallelocr.Parallel.KNNP;
+import com.parallelocr.gustavo.parallelocr.R;
+import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
+import com.parallelocr.gustavo.parallelocr.model.KNN_Vector;
+import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNNFragment;
 
 import java.util.ArrayList;
 
 /**
- * Created by gustavo on 2/02/15.
+ * Created by gustavo on 8/02/15.
  */
-public class Classifier extends AsyncTask<Context,Void,Void> {
+public class ClassifierP extends AsyncTask<Context,Void,Void> {
 
     private ScreenSlideKNNFragment fragment;
 
-    public Classifier(ScreenSlideKNNFragment fragment){
+    public ClassifierP(ScreenSlideKNNFragment fragment){
         this.fragment = fragment;
     }
 
@@ -29,7 +28,7 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
     protected Void doInBackground(Context... context) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        Bitmap img = ImgProc.toGrayscale(BitmapFactory.decodeResource(context[0].getResources(), R.drawable.digits, options));
+        Bitmap img = BitmapFactory.decodeResource(context[0].getResources(), R.drawable.digits, options);
 
         int a=0, b=0;
         Bitmap images_data[] = new Bitmap[50*50];
@@ -41,17 +40,16 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
                 responses[a] = (float)b;
                 a++;
             }
-            if(i % 100 == 0){
+            if(i % 100 == 0 && i != 0){
                 b++;
             }
         }
 
-        KNN cl = new KNN();
+        KNNP cl = new KNNP();
 
         if(cl.train(images_data,responses)){
             System.out.println("KNN entrenado");
             ArrayList<KNN_Vector> images_test = new ArrayList<KNN_Vector>(50*50);
-            String results[] = new String[50*50];
 
             for(int i=0;i<img.getHeight();i+=20){
                 for(int j=img.getWidth()/2;j<img.getWidth();j+=20){
@@ -61,7 +59,8 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
             }
 
             try {
-                cl.find_nearest(5, images_test, results);
+                int avg = verify(cl.find_nearest(5, images_test, context[0]));
+                System.out.println(avg*100/2500);
             } catch (KNNException e) {
                 e.printStackTrace();
             }
@@ -70,12 +69,28 @@ public class Classifier extends AsyncTask<Context,Void,Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        fragment.initTimer();
-    }
+    protected void onPreExecute() {fragment.initTimer();}
 
     @Override
-    protected void onPostExecute(Void result) {
-        fragment.finishTimer();
+    protected void onPostExecute(Void result) {fragment.finishTimer();}
+
+    /**
+     * Method to verify the result
+     * @param result
+     * @return
+     */
+    public static int verify(float[] result){
+        int a=0;
+        float b = 0;
+
+        for(int i=0;i<2500;i++){
+            if(result[i]==b){
+                a++;
+            }
+            if(i % 250 == 0 && i != 0){
+                b++;
+            }
+        }
+        return a;
     }
 }

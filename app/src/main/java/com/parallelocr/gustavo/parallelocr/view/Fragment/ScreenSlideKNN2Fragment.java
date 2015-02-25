@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.view.Fragment;
+package com.parallelocr.gustavo.parallelocr.view.Fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.parallelia.gustavo.parallelia.R;
+import com.parallelocr.gustavo.parallelocr.R;
 
 /**
  * Created by gustavo on 28/12/14.

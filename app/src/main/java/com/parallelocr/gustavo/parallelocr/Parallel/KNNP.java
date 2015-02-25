@@ -1,13 +1,12 @@
-package com.parallelia.gustavo.parallelia.Parallel;
+package com.parallelocr.gustavo.parallelocr.Parallel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 //import android.renderscript.Allocation;
 import android.support.v8.renderscript.*;
-import android.widget.Toast;
 
-import com.parallelia.gustavo.parallelia.controller.exception.KNNException;
-import com.parallelia.gustavo.parallelia.model.KNN_Vector;
+import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
+import com.parallelocr.gustavo.parallelocr.model.KNN_Vector;
 
 import java.util.ArrayList;
 
@@ -83,7 +82,7 @@ public class KNNP {
         return true;
     }
 
-    public float find_nearest(int k, ArrayList<KNN_Vector> test_data,String[] results, Context context) throws KNNException {
+    public float[] find_nearest(int k, ArrayList<KNN_Vector> test_data, Context context) throws KNNException {
         if (samples.size() <= 0) {
             throw new KNNException("The KNN classifer is not ready for find neighbord!");
         }
@@ -92,20 +91,19 @@ public class KNNP {
             throw new KNNException("k must be within 1 and max_k range.");
         }
 
-        float temp_result[] = new float[5];
-
-        //results = new String[test_data.size()];
+        float results[] = new float[test_data.size()];
         //renderscript
         rs = RenderScript.create(context);
         script = new ScriptC_knn(rs);
 
         //create allocations
         //Type t = new Type.Builder(rs, Element.I32(rs)).setX(5).create();
-        allocationIn = Allocation.createSized(rs, Element.I32(rs),5);
+        allocationIn = Allocation.createSized(rs, Element.I32(rs),test_data.size());
         //allocationIn = Allocation.createTyped(rs, t);
-        allocationIn.copyFrom(initVector(5));
+        allocationIn.copyFrom(initVector(test_data.size()));
 
-        allocationOut = Allocation.createSized(rs, Element.F32(rs), 5);
+        allocationOut = Allocation.createSized(rs, Element.F32(rs), test_data.size());
+        allocationOut.copyFrom(results);
 
         Allocation samples_a = Allocation.createSized(rs,Element.I32(rs),this.var_count*this.samples.size(), Allocation.USAGE_SCRIPT);
         samples_a.copy1DRangeFrom(0, samplestoAllocation().length, samplestoAllocation());
@@ -131,86 +129,10 @@ public class KNNP {
         //run parallel knn
         script.forEach_knn(allocationIn, allocationOut);
         //recolect results
-        allocationOut.copyTo(temp_result);
+        allocationOut.copyTo(results);
+        rs.finish();
 
-        String text = "RS:" + temp_result[0] + " - " + temp_result[3];
-        //int duration = Toast.LENGTH_SHORT;
-
-        //Toast toast = Toast.makeText(context, text, duration);
-        //toast.show();
-        System.out.println(text);
-        /*for (int s = 0; s < test_data.size(); s++) {
-            KNN_Vector test = test_data.get(s);
-            System.out.println(test.getLabel());
-            int dd[] = new int[k];
-            float nr[] = new float[results.length+k*this.var_count];
-            for (int i = 0; i < samples.size(); i++) {
-                KNN_Vector sample = samples.get(i);
-                for (int j = 0; j < this.var_count; j++) {
-                    int sum = 0, t, ii, ii1;
-                    int[] pixels_train = sample.getEigenvector();
-
-                    for (t = 0; t <= this.var_count - 4; t += 4) {
-                        double t0 = test.getEigenvector()[t] - pixels_train[t], t1 = test.getEigenvector()[t + 1] - pixels_train[t + 1];
-                        double t2 = test.getEigenvector()[t + 2] - pixels_train[t + 2], t3 = test.getEigenvector()[t + 3] - pixels_train[t + 3];
-                        sum += t0 * t0 + t1 * t1 + t2 * t2 + t3 * t3;
-                    }
-
-                    for (; t < this.var_count; t++) {
-                        double t0 = test.getEigenvector()[t] - pixels_train[t];
-                        sum += t0 * t0;
-                    }
-
-                    for (ii = k1 - 1; ii >= 0; ii--) {
-                        if (sum > dd[ii])
-                            break;
-                    }
-                    if (ii < k - 1) {
-                        for (ii1 = k2 - 1; ii1 > ii; ii1--) {
-                            dd[(ii1 + 1)] = dd[ii1];
-                            nr[(ii1 + 1)] = nr[ii1];
-                        }
-
-                        dd[(ii + 1)] = sum;
-                        nr[(ii + 1)] = sample.getLabel();//pixels_train[pixels_train.length - 1];
-                    }
-                    k1 = (k1 + 1) < k ? (k1 + 1) : k;
-                    k2 = k1 < (k - 1) ? k1 : (k - 1);
-                }
-            }
-
-            int prev_start = 0, best_count = 0, cur_count;
-            float best_val = 0;
-
-            for (int j = k1 - 1; j > 0; j--) {
-                boolean swap_f1 = false;
-                for (int j1 = 0; j1 < j; j1++) {
-                    if (nr[j1] > nr[(j1 + 1)]) {
-                        float t;
-                        t = nr[j1];
-                        nr[j1] = nr[(j1 + 1)];
-                        nr[(j1 + 1)] = t;
-                        swap_f1 = true;
-                    }
-                }
-                if (!swap_f1)
-                    break;
-            }
-
-            for (int j = 1; j <= k1; j++) {
-                if (j == k1 || nr[j] != nr[(j - 1)]) {
-                    cur_count = j - prev_start;
-                    if (best_count < cur_count) {
-                        best_count = cur_count;
-                        best_val = nr[(j - 1)];
-                    }
-                    prev_start = j;
-                }
-            }
-            System.out.println(best_val);
-            results[s] = String.valueOf(best_val);
-        }*/
-        return 0;
+        return results;
     }
 
     /**

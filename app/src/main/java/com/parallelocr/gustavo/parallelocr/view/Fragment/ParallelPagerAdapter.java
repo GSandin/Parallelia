@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.view.Fragment;
+package com.parallelocr.gustavo.parallelocr.view.Fragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.view.Transformer;
+package com.parallelocr.gustavo.parallelocr.view.Transformer;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

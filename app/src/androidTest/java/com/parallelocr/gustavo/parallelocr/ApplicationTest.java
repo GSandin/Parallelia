@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia;
+package com.parallelocr.gustavo.parallelocr;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

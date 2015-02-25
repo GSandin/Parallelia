@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.view;
+package com.parallelocr.gustavo.parallelocr.view;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -6,13 +6,13 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-import com.parallelia.gustavo.parallelia.R;
-import com.parallelia.gustavo.parallelia.controller.Classifier;
-import com.parallelia.gustavo.parallelia.controller.ClassifierP;
-import com.parallelia.gustavo.parallelia.view.Fragment.ParallelPagerAdapter;
-import com.parallelia.gustavo.parallelia.view.Fragment.ScreenSlideKNN2Fragment;
-import com.parallelia.gustavo.parallelia.view.Fragment.ScreenSlideKNNFragment;
-import com.parallelia.gustavo.parallelia.view.Transformer.DepthPageTransformer;
+import com.parallelocr.gustavo.parallelocr.R;
+import com.parallelocr.gustavo.parallelocr.controller.Classifier;
+import com.parallelocr.gustavo.parallelocr.controller.ClassifierP;
+import com.parallelocr.gustavo.parallelocr.view.Fragment.ParallelPagerAdapter;
+import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNN2Fragment;
+import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNNFragment;
+import com.parallelocr.gustavo.parallelocr.view.Transformer.DepthPageTransformer;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainParallelia extends FragmentActivity{

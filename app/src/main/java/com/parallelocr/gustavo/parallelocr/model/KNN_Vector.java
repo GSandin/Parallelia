@@ -1,6 +1,8 @@
-package com.parallelia.gustavo.parallelia.model;
+package com.parallelocr.gustavo.parallelocr.model;
 
 import android.graphics.Bitmap;
+
+import com.parallelocr.gustavo.parallelocr.controller.Utils.ImgProc;
 
 /**
  * Created by gustavo on 16/01/15.
@@ -15,6 +17,7 @@ public class KNN_Vector {
         this.eigenvector = new int[image.getWidth()*image.getHeight()];
         //copy pixel data from the Bitmap into the 'intArray' array
         image.getPixels(this.eigenvector, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+        this.eigenvector = ImgProc.toGrayscale(this.eigenvector);
         //this.setEigenvector(eigenvector);
     }
 

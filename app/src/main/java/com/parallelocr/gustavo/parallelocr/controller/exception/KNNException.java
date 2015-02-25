@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.controller.exception;
+package com.parallelocr.gustavo.parallelocr.controller.exception;
 
 /**
  * Created by gustavo on 19/01/15.

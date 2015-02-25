@@ -1,4 +1,4 @@
-package com.parallelia.gustavo.parallelia.view.Fragment;
+package com.parallelocr.gustavo.parallelocr.view.Fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.parallelia.gustavo.parallelia.R;
+import com.parallelocr.gustavo.parallelocr.R;
 
 /**
  * Created by gustavo on 28/12/14.
