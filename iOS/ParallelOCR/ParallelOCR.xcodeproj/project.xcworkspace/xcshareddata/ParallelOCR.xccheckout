@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>4A02BC0D-D109-4C44-99F0-B5BA17750DE1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ParallelOCR</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>89B57A4EFDA5B4A40E1D48091D53CC6FE1CEC857</key>
+		<string>https://github.com/GSandin/Parallelocr.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>iOS/ParallelOCR/ParallelOCR.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>89B57A4EFDA5B4A40E1D48091D53CC6FE1CEC857</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/GSandin/Parallelocr.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>89B57A4EFDA5B4A40E1D48091D53CC6FE1CEC857</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>89B57A4EFDA5B4A40E1D48091D53CC6FE1CEC857</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Parallelocr</string>
+		</dict>
+	</array>
+</dict>
+</plist>
