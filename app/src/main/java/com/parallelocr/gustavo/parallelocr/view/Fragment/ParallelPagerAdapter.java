@@ -39,7 +39,12 @@ public class ParallelPagerAdapter  extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Página " + (position + 1);
+        if(this.fragments.get(position).getClass().getSimpleName().equals("ScreenSlideKNNFragment")){
+            return "KNN";
+        }else {
+            return "SVM";
+        }
+        //return "Página " + (position + 1);
     }
 
     @Override

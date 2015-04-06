@@ -16,11 +16,11 @@ import java.util.ArrayList;
 /**
  * Created by gustavo on 2/02/15.
  */
-public class Classifier extends AsyncTask<Context,Void,Void> {
+public class ClassifierKNN extends AsyncTask<Context,Void,Void> {
 
     private ScreenSlideKNNFragment fragment;
 
-    public Classifier(ScreenSlideKNNFragment fragment){
+    public ClassifierKNN(ScreenSlideKNNFragment fragment){
         this.fragment = fragment;
     }
 
