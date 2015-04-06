@@ -19,9 +19,11 @@ import java.util.ArrayList;
 public class ClassifierKNNP extends AsyncTask<Context,Void,Void> {
 
     private ScreenSlideKNNFragment fragment;
+    private int select_script;
 
-    public ClassifierKNNP(ScreenSlideKNNFragment fragment){
+    public ClassifierKNNP(ScreenSlideKNNFragment fragment,int select_script){
         this.fragment = fragment;
+        this.select_script = select_script;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class ClassifierKNNP extends AsyncTask<Context,Void,Void> {
             }
         }
 
-        KNNP cl = new KNNP();
+        KNNP cl = new KNNP(select_script);
 
         if(cl.train(images_data,responses)){
             System.out.println("KNN entrenado");

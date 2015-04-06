@@ -82,7 +82,29 @@ public class MainParallelia extends FragmentActivity{
     public void KNN_Parallel(View v){
         ParallelPagerAdapter adapter = (ParallelPagerAdapter) pager.getAdapter();
         ScreenSlideKNNFragment fragment = (ScreenSlideKNNFragment)adapter.getItem(0);
-        ClassifierKNNP c = new ClassifierKNNP(fragment);
+        ClassifierKNNP c = new ClassifierKNNP(fragment,0);
+        c.execute(this);
+    }
+
+    /**
+     * Method to run the KNN without paralyze
+     * @param v
+     */
+    public void KNN_Parallel2(View v){
+        ParallelPagerAdapter adapter = (ParallelPagerAdapter) pager.getAdapter();
+        ScreenSlideKNNFragment fragment = (ScreenSlideKNNFragment)adapter.getItem(0);
+        ClassifierKNNP c = new ClassifierKNNP(fragment,1);
+        c.execute(this);
+    }
+
+    /**
+     * Method to run the KNN without paralyze
+     * @param v
+     */
+    public void KNN_Parallel3(View v){
+        ParallelPagerAdapter adapter = (ParallelPagerAdapter) pager.getAdapter();
+        ScreenSlideKNNFragment fragment = (ScreenSlideKNNFragment)adapter.getItem(0);
+        ClassifierKNNP c = new ClassifierKNNP(fragment,2);
         c.execute(this);
     }
 }

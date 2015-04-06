@@ -95,7 +95,13 @@ public class ScreenSlideKNNFragment extends Fragment {
         algorithm.setText(n_algorithm);
 
         Button algorithm_p = (Button) rootView.findViewById(R.id.KNN_parallel);
-        algorithm_p.setText(n_algorithm + " Paralyzed");
+        algorithm_p.setText(n_algorithm + " Paralyzed FP relaxed");
+
+        Button algorithm_p2 = (Button) rootView.findViewById(R.id.KNN_parallel2);
+        algorithm_p2.setText(n_algorithm + " Paralyzed FP imprecise");
+
+        Button algorithm_p3 = (Button) rootView.findViewById(R.id.KNN_parallel3);
+        algorithm_p3.setText(n_algorithm + " Paralyzed FP full");
 
         timer=(TextView)this.rootView.findViewById(R.id.timer);
 

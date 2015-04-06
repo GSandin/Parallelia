@@ -19,6 +19,20 @@
         android:onClick="KNN_Parallel"
         />
 
+    <Button
+        android:id="@+id/KNN_parallel2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:onClick="KNN_Parallel2"
+        />
+
+    <Button
+        android:id="@+id/KNN_parallel3"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:onClick="KNN_Parallel3"
+        />
+
     <TextView
         android:id="@+id/timer"
         android:layout_width="match_parent"

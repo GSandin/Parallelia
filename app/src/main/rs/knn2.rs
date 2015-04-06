@@ -1,6 +1,6 @@
 #pragma version(1)
 #pragma rs java_package_name(com.parallelocr.gustavo.parallelocr.Parallel)
-#pragma rs_fp_imprecise
+#pragma rs_fp_relaxed
 
 #include "rs_debug.rsh"
 
@@ -13,7 +13,7 @@ int len_results;
 int len_samples;
 int var_count;
 
-float __attribute__((kernel)) knn(int32_t in, uint32_t x, uint32_t y)
+float __attribute__((kernel)) knn2(int32_t in, uint32_t x, uint32_t y)
 {
     int k1 = 0, k2 = 0, a=0;
     float best_val;

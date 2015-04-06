@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * Created by gustavo on 6/02/15.
  */
 public class KNNP {
+    private int select_script;
     // RenderScript-specific properties:
     // RS context
     private RenderScript rs;
@@ -21,6 +22,8 @@ public class KNNP {
     // The IDE generates the class automatically based on the rs file, the class is located in the 'gen'
     // folder.
     private ScriptC_knn script;
+    private ScriptC_knn2 script2;
+    private ScriptC_knn3 script3;
     // Allocations - memory abstractions that RenderScript kernels operate on.
     private Allocation allocationIn;
     private Allocation allocationOut;
@@ -30,13 +33,15 @@ public class KNNP {
     private ArrayList<KNN_Vector> samples;
     private int var_count;
 
-    public KNNP() {
+    public KNNP(int select_script) {
+        this.select_script = select_script;
         this.var_count = 0;
         this.max_k = 32;
         this.samples = new ArrayList<KNN_Vector>();
     }
 
-    public KNNP(int max_k) {
+    public KNNP(int select_script,int max_k) {
+        this.select_script = select_script;
         this.max_k = max_k;
         this.var_count = 0;
         this.samples = new ArrayList<KNN_Vector>();
@@ -94,7 +99,7 @@ public class KNNP {
         float results[] = new float[test_data.size()];
         //renderscript
         rs = RenderScript.create(context);
-        script = new ScriptC_knn(rs);
+        selectScript(select_script);
 
         //create allocations
         //Type t = new Type.Builder(rs, Element.I32(rs)).setX(5).create();
@@ -117,22 +122,83 @@ public class KNNP {
         tags.copy1DRangeFrom(0, tagstoAllocation().length, tagstoAllocation());
         //tags.copyFrom(tagstoAllocation());
 
-        //set globals variables
-        script.set_k(k);
-        script.set_len_results(test_data.size());
-        script.set_len_samples(samples.size());
-        script.set_var_count(this.var_count);
-        script.set_samples(samples_a);
-        script.set_tags(tags);
-        script.set_test_data(test_data_a);
-
-        //run parallel knn
-        script.forEach_knn(allocationIn, allocationOut);
+        setDataScript(select_script,k,test_data.size(),samples_a,test_data_a,tags);
         //recolect results
         allocationOut.copyTo(results);
         rs.finish();
 
         return results;
+    }
+
+    /**
+     * Method to select diferents renderscripts and instance
+     * @param n
+     */
+    void selectScript(int n){
+        switch(n){
+            case 0:
+                script = new ScriptC_knn(rs);
+                break;
+            case 1:
+                script2 = new ScriptC_knn2(rs);
+                break;
+            case 2:
+                script3 = new ScriptC_knn3(rs);
+                break;
+        }
+    }
+
+    /**
+     * Method to put data in different renderscript
+     * @param n
+     * @param k
+     * @param test_data_n
+     * @param samples_a
+     * @param test_data_a
+     * @param tags
+     */
+    void setDataScript(int n, int k,int test_data_n,Allocation samples_a,Allocation test_data_a,Allocation tags){
+        switch(n){
+            case 0:
+                //set globals variables
+                script.set_k(k);
+                script.set_len_results(test_data_n);
+                script.set_len_samples(samples.size());
+                script.set_var_count(this.var_count);
+                script.set_samples(samples_a);
+                script.set_tags(tags);
+                script.set_test_data(test_data_a);
+
+                //run parallel knn
+                script.forEach_knn(allocationIn, allocationOut);
+                break;
+            case 1:
+                //set globals variables
+                script2.set_k(k);
+                script2.set_len_results(test_data_n);
+                script2.set_len_samples(samples.size());
+                script2.set_var_count(this.var_count);
+                script2.set_samples(samples_a);
+                script2.set_tags(tags);
+                script2.set_test_data(test_data_a);
+
+                //run parallel knn
+                script2.forEach_knn2(allocationIn, allocationOut);
+                break;
+            case 2:
+                //set globals variables
+                script3.set_k(k);
+                script3.set_len_results(test_data_n);
+                script3.set_len_samples(samples.size());
+                script3.set_var_count(this.var_count);
+                script3.set_samples(samples_a);
+                script3.set_tags(tags);
+                script3.set_test_data(test_data_a);
+
+                //run parallel knn
+                script3.forEach_knn2(allocationIn, allocationOut);
+                break;
+        }
     }
 
     /**
