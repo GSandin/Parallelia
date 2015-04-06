@@ -28,7 +28,7 @@ public class ParalleliaSplashScreenActivity extends Activity {
         // Hide title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.parallelia_splash_screen);
+        setContentView(R.layout.parallelocr_splash_screen);
 
         TimerTask task = new TimerTask() {
             @Override

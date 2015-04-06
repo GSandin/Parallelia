@@ -3,17 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/black"
     tools:context=".SplashScreenActivity" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop = "true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/background" />
 
     <ImageView
         android:layout_width="500dp"
         android:layout_height="400dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom = "true"
+        android:layout_alignParentRight="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitXY"
-        android:src="@drawable/parallelia_title"
+        android:src="@drawable/parallelocr_title"
         android:id="@+id/imageView" />
 
     <RelativeLayout
