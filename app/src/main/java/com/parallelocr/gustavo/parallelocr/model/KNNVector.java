@@ -7,12 +7,12 @@ import com.parallelocr.gustavo.parallelocr.controller.Utils.ImgProc;
 /**
  * Created by gustavo on 16/01/15.
  */
-public class KNN_Vector {
+public class KNNVector {
     //atributos
     private float label;
     private int[] eigenvector;
 
-    public KNN_Vector(Bitmap image, float label){
+    public KNNVector(Bitmap image, float label){
         this.label = label;
         this.eigenvector = new int[image.getWidth()*image.getHeight()];
         //copy pixel data from the Bitmap into the 'intArray' array

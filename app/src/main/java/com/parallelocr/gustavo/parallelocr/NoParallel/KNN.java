@@ -3,7 +3,7 @@ package com.parallelocr.gustavo.parallelocr.NoParallel;
 import android.graphics.Bitmap;
 
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNN_Vector;
+import com.parallelocr.gustavo.parallelocr.model.KNNVector;
 
 import java.util.ArrayList;
 
@@ -13,19 +13,19 @@ import java.util.ArrayList;
 public class KNN {
     //atributtes
     private int max_k;
-    private ArrayList<KNN_Vector> samples;
+    private ArrayList<KNNVector> samples;
     private int var_count;
 
     public KNN() {
         this.var_count = 0;
         this.max_k = 32;
-        this.samples = new ArrayList<KNN_Vector>();
+        this.samples = new ArrayList<KNNVector>();
     }
 
     public KNN(int max_k) {
         this.max_k = max_k;
         this.var_count = 0;
-        this.samples = new ArrayList<KNN_Vector>();
+        this.samples = new ArrayList<KNNVector>();
     }
 
     /**
@@ -59,7 +59,7 @@ public class KNN {
         }
 
         for (int i = 0; i < labels.length; i++) {
-            KNN_Vector kv = new KNN_Vector(images[i], labels[i]);
+            KNNVector kv = new KNNVector(images[i], labels[i]);
             samples.add(kv);
         }
 
@@ -68,7 +68,7 @@ public class KNN {
         return true;
     }
 
-    public float[] find_nearest(int k, ArrayList<KNN_Vector> test_data) throws KNNException {
+    public float[] find_nearest(int k, ArrayList<KNNVector> test_data) throws KNNException {
         if (samples.size() <= 0) {
             throw new KNNException("The KNN classifer is not ready for find neighbord!");
         }
@@ -84,10 +84,10 @@ public class KNN {
 
         int k1 = 0, k2 = 0;
         for (int s = 0; s < samples.size(); s++) {
-            KNN_Vector sample = samples.get(s);
+            KNNVector sample = samples.get(s);
 
             for (int i = 0; i < test_data.size(); i++) {
-                KNN_Vector test = test_data.get(i);
+                KNNVector test = test_data.get(i);
                 int ii, ii1;
                 double sum = 0;
 

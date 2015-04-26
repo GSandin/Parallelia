@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.parallelocr.gustavo.parallelocr.Parallel.KNNP;
 import com.parallelocr.gustavo.parallelocr.R;
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNN_Vector;
+import com.parallelocr.gustavo.parallelocr.model.KNNVector;
 import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNNFragment;
 
 import java.util.ArrayList;
@@ -51,11 +51,11 @@ public class ClassifierKNNP extends AsyncTask<Context,Void,Void> {
 
         if(cl.train(images_data,responses)){
             System.out.println("KNN entrenado");
-            ArrayList<KNN_Vector> images_test = new ArrayList<KNN_Vector>(50*50);
+            ArrayList<KNNVector> images_test = new ArrayList<KNNVector>(50*50);
 
             for(int i=0;i<img.getHeight();i+=20){
                 for(int j=img.getWidth()/2;j<img.getWidth();j+=20){
-                    KNN_Vector kv = new KNN_Vector(Bitmap.createBitmap(img, j, i, 20, 20),-1);
+                    KNNVector kv = new KNNVector(Bitmap.createBitmap(img, j, i, 20, 20),-1);
                     images_test.add(kv);
                 }
             }

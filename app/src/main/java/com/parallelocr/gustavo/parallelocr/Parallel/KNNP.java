@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.*;
 
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNN_Vector;
+import com.parallelocr.gustavo.parallelocr.model.KNNVector;
 
 import java.util.ArrayList;
 
@@ -30,21 +30,21 @@ public class KNNP {
 
     //atributtes
     private int max_k;
-    private ArrayList<KNN_Vector> samples;
+    private ArrayList<KNNVector> samples;
     private int var_count;
 
     public KNNP(int select_script) {
         this.select_script = select_script;
         this.var_count = 0;
         this.max_k = 32;
-        this.samples = new ArrayList<KNN_Vector>();
+        this.samples = new ArrayList<KNNVector>();
     }
 
     public KNNP(int select_script,int max_k) {
         this.select_script = select_script;
         this.max_k = max_k;
         this.var_count = 0;
-        this.samples = new ArrayList<KNN_Vector>();
+        this.samples = new ArrayList<KNNVector>();
     }
 
     /**
@@ -78,7 +78,7 @@ public class KNNP {
         }
 
         for (int i = 0; i < labels.length; i++) {
-            KNN_Vector kv = new KNN_Vector(images[i], labels[i]);
+            KNNVector kv = new KNNVector(images[i], labels[i]);
             samples.add(kv);
         }
 
@@ -87,7 +87,7 @@ public class KNNP {
         return true;
     }
 
-    public float[] find_nearest(int k, ArrayList<KNN_Vector> test_data, Context context) throws KNNException {
+    public float[] find_nearest(int k, ArrayList<KNNVector> test_data, Context context) throws KNNException {
         if (samples.size() <= 0) {
             throw new KNNException("The KNN classifer is not ready for find neighbord!");
         }
@@ -225,7 +225,7 @@ public class KNNP {
         int a=0;
 
         for(int i=0;i<this.samples.size();i++){
-            KNN_Vector kn =this.samples.get(i);
+            KNNVector kn =this.samples.get(i);
             for(int j=0;j<this.var_count;j++){
                 samples[a] = kn.getEigenvector()[j];
                 a++;
@@ -240,12 +240,12 @@ public class KNNP {
      * @param test_data
      * @return
      */
-    private int[] test_datatoAllocation(ArrayList<KNN_Vector> test_data){
+    private int[] test_datatoAllocation(ArrayList<KNNVector> test_data){
         int td[] = new int[this.var_count*test_data.size()];
         int a=0;
 
         for(int i=0;i<test_data.size();i++){
-            KNN_Vector kn =test_data.get(i);
+            KNNVector kn =test_data.get(i);
             for(int j=0;j<this.var_count;j++){
                 td[a] = kn.getEigenvector()[j];
                 a++;
