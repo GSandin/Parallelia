@@ -6,7 +6,7 @@ package com.parallelocr.gustavo.parallelocr.NoParallel;
 public class SVM {
     //atributes
     public static final int	C = 0;
-    public static final int	C_SVC = 00;
+    public static final int	C_SVC = 0;
     public static final int	COEF = 4;
     public static final int	DEGREE = 5;
     public static final int	EPS_SVR = 103;
