@@ -62,9 +62,9 @@ vector<float> KNN::find_nearest(int k, Mat testSet) {
     float dd[testSet.rows][k];
 
     int k1 = 0, k2 = 0;
-    #pragma omp parallel shared(results,nr,dd,k1,k2)
+    #pragma omp parallel firstprivate(k1,k2) shared(nr,dd,k)
     {
-        #pragma omp for
+        #pragma omp for schedule(static, 2500)
         for (int s = 0; s < totalSamples(); s++) {
             KNNVector vector = samples.at(s);
             Mat pixels_train = vector.getEigenvector();
@@ -93,14 +93,15 @@ vector<float> KNN::find_nearest(int k, Mat testSet) {
                     continue;
 
                 if (ii < k - 1) {
-                    for (ii1 = k2 - 1; ii1 > ii; ii1--) {
-                        dd[i][(ii1 + 1)] = dd[i][ii1];
-                        nr[i][(ii1 + 1)] = nr[i][ii1];
-                    }
+                        for (ii1 = k2 - 1; ii1 > ii; ii1--) {
+                            dd[i][(ii1 + 1)] = dd[i][ii1];
+                            nr[i][(ii1 + 1)] = nr[i][ii1];
+                        }
 
-                    dd[i][(ii + 1)] = sum;
-                    nr[i][(ii + 1)] = vector.getLabel();//pixels_train[pixels_train.length - 1];
+                        dd[i][(ii + 1)] = sum;
+                        nr[i][(ii + 1)] = vector.getLabel();//pixels_train[pixels_train.length - 1];
                 }
+            
             }
 
             k1 = (k1 + 1) < k ? (k1 + 1) : k;

@@ -3,7 +3,7 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-CFLAGS=-c -Wall -ansi -pedantic -Dcimg_use_vt100
+CFLAGS=-c -Wall -ansi -Dcimg_use_vt100
 CMP=-I/usr/X11R6/include  -lm -L/usr/X11R6/lib -lpthread -lX11 -fopenmp 
 all: knn
 
