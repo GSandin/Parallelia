@@ -62,46 +62,50 @@ vector<float> KNN::find_nearest(int k, Mat testSet) {
     float dd[testSet.rows][k];
 
     int k1 = 0, k2 = 0;
-    for (int s = 0; s < totalSamples(); s++) {
-        KNNVector vector = samples.at(s);
-        Mat pixels_train = vector.getEigenvector();
+    #pragma omp parallel shared(results,nr,dd,k1,k2)
+    {
+        #pragma omp for
+        for (int s = 0; s < totalSamples(); s++) {
+            KNNVector vector = samples.at(s);
+            Mat pixels_train = vector.getEigenvector();
 
-        for (int i = 0; i < testSet.rows; i++) {
-            Mat test = testSet.rowRange(i,i+1);
-            int ii, ii1;
-            double sum = 0;
+            for (int i = 0; i < testSet.rows; i++) {
+                Mat test = testSet.rowRange(i,i+1);
+                int ii, ii1;
+                double sum = 0;
 
-            int t;
-            for (t = 0; t <= totalFeatures() - 4; t += 4) {
-                double t0 = test.at<float>(0, t) - pixels_train.at<float>(0, t), t1 = test.at<float>(0, t + 1) - pixels_train.at<float>(0, t + 1);
-                double t2 = test.at<float>(0, t + 2) - pixels_train.at<float>(0, t + 2), t3 = test.at<float>(0, t + 3) - pixels_train.at<float>(0, t + 3);
-                sum += t0 * t0 + t1 * t1 + t2 * t2 + t3 * t3;
-            }
-            
-            for (; t < totalFeatures(); t++) {
-                double t0 = test.at<float>(0, t) - pixels_train.at<float>(0, t);
-                sum += t0 * t0;
-            }
-
-            for (ii = k1 - 1; ii >= 0; ii--)
-                if ((float) sum > dd[i][ii])
-                    break;
-            if (ii >= k - 1)
-                continue;
-
-            if (ii < k - 1) {
-                for (ii1 = k2 - 1; ii1 > ii; ii1--) {
-                    dd[i][(ii1 + 1)] = dd[i][ii1];
-                    nr[i][(ii1 + 1)] = nr[i][ii1];
+                int t;
+                for (t = 0; t <= totalFeatures() - 4; t += 4) {
+                    double t0 = test.at<float>(0, t) - pixels_train.at<float>(0, t), t1 = test.at<float>(0, t + 1) - pixels_train.at<float>(0, t + 1);
+                    double t2 = test.at<float>(0, t + 2) - pixels_train.at<float>(0, t + 2), t3 = test.at<float>(0, t + 3) - pixels_train.at<float>(0, t + 3);
+                    sum += t0 * t0 + t1 * t1 + t2 * t2 + t3 * t3;
+                }
+                
+                for (; t < totalFeatures(); t++) {
+                    double t0 = test.at<float>(0, t) - pixels_train.at<float>(0, t);
+                    sum += t0 * t0;
                 }
 
-                dd[i][(ii + 1)] = sum;
-                nr[i][(ii + 1)] = vector.getLabel();//pixels_train[pixels_train.length - 1];
-            }
-        }
+                for (ii = k1 - 1; ii >= 0; ii--)
+                    if ((float) sum > dd[i][ii])
+                        break;
+                if (ii >= k - 1)
+                    continue;
 
-        k1 = (k1 + 1) < k ? (k1 + 1) : k;
-        k2 = k1 < (k - 1) ? k1 : (k - 1);
+                if (ii < k - 1) {
+                    for (ii1 = k2 - 1; ii1 > ii; ii1--) {
+                        dd[i][(ii1 + 1)] = dd[i][ii1];
+                        nr[i][(ii1 + 1)] = nr[i][ii1];
+                    }
+
+                    dd[i][(ii + 1)] = sum;
+                    nr[i][(ii + 1)] = vector.getLabel();//pixels_train[pixels_train.length - 1];
+                }
+            }
+
+            k1 = (k1 + 1) < k ? (k1 + 1) : k;
+            k2 = k1 < (k - 1) ? k1 : (k - 1);
+        }
     }
 
     k1 = min(k, totalSamples());
