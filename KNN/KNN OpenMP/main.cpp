@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <ctime>
+#include <omp.h>
 #include <sys/timeb.h>
 using namespace cv;
 using namespace std;
@@ -22,9 +23,7 @@ int main(int argc, const char** argv){
 
 	int K=5;
 
-	clock_t start,end;
-	
-	start = clock();
+	const double startTime = omp_get_wtime();
 
 	Mat img = imread("digits.png",CV_LOAD_IMAGE_COLOR);
 
@@ -86,11 +85,11 @@ int main(int argc, const char** argv){
 	//knn.find_nearest(test_final,K,results,neighbors,neighborsResponse);
 	results = Mat(test.rows, 0, CV_32FC1, temp);
 
-	end = clock();
+	const double endTime = omp_get_wtime();
+    printf("Duration = %lf seconds\n", (endTime - startTime));
 
 	cout<<"KNN tested"<<endl;
-	cout<<"Time: "<<(end-start)/CLOCKS_PER_SEC<<endl;
-
+	
 	average(results, testClasses);
 	/*namedWindow("train", CV_WINDOW_AUTOSIZE);
 	namedWindow("test", CV_WINDOW_AUTOSIZE);
