@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.*;
 
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNNVector;
+import com.parallelocr.gustavo.parallelocr.model.KNN.KNNVector;
 
 import java.util.ArrayList;
 

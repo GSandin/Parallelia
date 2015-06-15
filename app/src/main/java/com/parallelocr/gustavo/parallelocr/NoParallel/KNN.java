@@ -3,7 +3,7 @@ package com.parallelocr.gustavo.parallelocr.NoParallel;
 import android.graphics.Bitmap;
 
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNNVector;
+import com.parallelocr.gustavo.parallelocr.model.KNN.KNNVector;
 
 import java.util.ArrayList;
 
@@ -85,6 +85,7 @@ public class KNN {
         int k1 = 0, k2 = 0;
         for (int s = 0; s < samples.size(); s++) {
             KNNVector sample = samples.get(s);
+            int[] pixels_train = sample.getEigenvector();
 
             for (int i = 0; i < test_data.size(); i++) {
                 KNNVector test = test_data.get(i);
@@ -92,7 +93,6 @@ public class KNN {
                 double sum = 0;
 
                 int t;
-                int[] pixels_train = sample.getEigenvector();
 
                 for (t = 0; t <= this.var_count - 4; t += 4) {
                     double t0 = test.getEigenvector()[t] - pixels_train[t], t1 = test.getEigenvector()[t + 1] - pixels_train[t + 1];

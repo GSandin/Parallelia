@@ -1,4 +1,4 @@
-package com.parallelocr.gustavo.parallelocr.model;
+package com.parallelocr.gustavo.parallelocr.model.KNN;
 
 import android.graphics.Bitmap;
 

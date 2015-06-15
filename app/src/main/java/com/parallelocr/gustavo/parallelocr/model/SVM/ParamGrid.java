@@ -1,4 +1,4 @@
-package com.parallelocr.gustavo.parallelocr.model;
+package com.parallelocr.gustavo.parallelocr.model.SVM;
 
 import com.parallelocr.gustavo.parallelocr.controller.exception.ParamGridException;
 
@@ -17,8 +17,8 @@ public class ParamGrid {
     private static final double DBL_EPSILON = 2.2204460492503131e-16;
     private static final double FLT_EPSILON = 1.1920929e-07F;
 
-    private int min_val;
-    private int max_val;
+    private double min_val;
+    private double max_val;
     private int step;
 
     public ParamGrid() {
@@ -40,19 +40,19 @@ public class ParamGrid {
         return ok;
     }
 
-    public int getMin_val() {
+    public double getMin_val() {
         return min_val;
     }
 
-    public void setMin_val(int min_val) {
+    public void setMin_val(double min_val) {
         this.min_val = min_val;
     }
 
-    public int getMax_val() {
+    public double getMax_val() {
         return max_val;
     }
 
-    public void setMax_val(int max_val) {
+    public void setMax_val(double max_val) {
         this.max_val = max_val;
     }
 

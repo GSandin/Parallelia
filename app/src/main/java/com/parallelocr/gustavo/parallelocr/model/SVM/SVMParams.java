@@ -1,4 +1,4 @@
-package com.parallelocr.gustavo.parallelocr.model;
+package com.parallelocr.gustavo.parallelocr.model.SVM;
 
 import com.parallelocr.gustavo.parallelocr.NoParallel.SVM;
 
@@ -16,6 +16,7 @@ public class SVMParams {
     private double p;
     private int svm_type;
     private TermCriteria term_crit;
+    private float[] class_weight;
 
     //Constructors
     public SVMParams(){
@@ -185,5 +186,13 @@ public class SVMParams {
      */
     public void setTerm_crit(TermCriteria term_crit) {
         this.term_crit = term_crit;
+    }
+
+    public float[] getClass_weight() {
+        return class_weight;
+    }
+
+    public void setClass_weight(float[] class_weight) {
+        this.class_weight = class_weight;
     }
 }

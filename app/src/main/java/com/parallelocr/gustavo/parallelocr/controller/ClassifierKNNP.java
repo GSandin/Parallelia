@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.parallelocr.gustavo.parallelocr.Parallel.KNNP;
 import com.parallelocr.gustavo.parallelocr.R;
 import com.parallelocr.gustavo.parallelocr.controller.exception.KNNException;
-import com.parallelocr.gustavo.parallelocr.model.KNNVector;
+import com.parallelocr.gustavo.parallelocr.model.KNN.KNNVector;
 import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNNFragment;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class ClassifierKNNP extends AsyncTask<Context,Void,Void> {
                 responses[a] = (float)b;
                 a++;
             }
-            if(i % 100 == 0 && i != 0){
+            if((i+20) % 100 == 0){
                 b++;
             }
         }

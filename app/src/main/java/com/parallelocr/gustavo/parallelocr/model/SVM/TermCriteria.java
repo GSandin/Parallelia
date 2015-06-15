@@ -1,4 +1,4 @@
-package com.parallelocr.gustavo.parallelocr.model;
+package com.parallelocr.gustavo.parallelocr.model.SVM;
 
 /**
  * Created by gustavo on 19/04/15.
