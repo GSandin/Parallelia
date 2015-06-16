@@ -47,7 +47,7 @@ bool KNN::train(Mat trainSet, Mat trainLabels) {
 }
 
 vector<float> KNN::find_nearest(int k, Mat testSet) {
-	if (samples.size() <= 0) {
+    if (samples.size() <= 0) {
         cout<<"The KNN classifer is not ready for find neighbord!"<<endl;
         exit(-1);
     }
