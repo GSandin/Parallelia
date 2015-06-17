@@ -18,7 +18,7 @@ public class SVMKernel {
     }
 
     public SVMKernel(SVMParams params, int calc_func) {
-        this.params = params;
+        this.setParams(params);
         this.calc_func = calc_func;
 
     }
@@ -37,7 +37,7 @@ public class SVMKernel {
         float max_val = (float)(FLT_MAX*1e-3);
         int j;
 
-        switch(params.getKernel_type()) {
+        switch(getParams().getKernel_type()) {
             case SVM.RBF:
                 calc_rbf(vcount, var_count, vecs, another, results);
                 break;
@@ -109,9 +109,9 @@ public class SVMKernel {
      */
     private void calc_poly( int vcount, int var_count, ArrayList<ArrayList<Float>> vecs, ArrayList<Float> another,
                             ArrayList<Float> results ) {
-        calc_non_rbf_base( vcount, var_count, vecs, another, results, params.getGamma(), params.getCoef0() );
+        calc_non_rbf_base( vcount, var_count, vecs, another, results, getParams().getGamma(), getParams().getCoef0() );
         if( vcount > 0 )
-            pow(results, params.getDegree());
+            pow(results, getParams().getDegree());
     }
 
     /**
@@ -125,8 +125,8 @@ public class SVMKernel {
     private void calc_sigmoid( int vcount, int var_count, ArrayList<ArrayList<Float>> vecs, ArrayList<Float> another,
                                ArrayList<Float> results ) {
         int j;
-        calc_non_rbf_base( vcount, var_count, vecs, another, results, -2*params.getGamma(),
-                -2*params.getCoef0() );
+        calc_non_rbf_base( vcount, var_count, vecs, another, results, -2* getParams().getGamma(),
+                -2* getParams().getCoef0() );
         //TODO: speedup this
         for( j = 0; j < vcount; j++ )
         {
@@ -150,7 +150,7 @@ public class SVMKernel {
      */
     private void calc_rbf( int vcount, int var_count, ArrayList<ArrayList<Float>> vecs, ArrayList<Float> another,
                            ArrayList<Float> results) {
-        double gamma = -params.getGamma();
+        double gamma = -getParams().getGamma();
         int j, k;
 
         for( j = 0; j < vcount; j++ )
@@ -206,6 +206,14 @@ public class SVMKernel {
 
     private void clear() {
         this.calc_func = 0;
-        params = new SVMParams();
+        setParams(new SVMParams());
+    }
+
+    public SVMParams getParams() {
+        return params;
+    }
+
+    public void setParams(SVMParams params) {
+        this.params = params;
     }
 }
