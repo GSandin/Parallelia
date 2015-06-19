@@ -81,7 +81,7 @@ public class ScreenSlideSVMFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_screen_knn_page, container, false);
+                R.layout.fragment_screen_svm_page, container, false);
 
         //ViewGroup rootView = (ViewGroup) inflater.inflate(
                 //R.layout.fragment_screen_knn_page, container, false);
@@ -94,10 +94,10 @@ public class ScreenSlideSVMFragment extends Fragment {
         rootView.setBackgroundColor(this.color);
 
         //Put the name of algorithm
-        Button algorithm = (Button) rootView.findViewById(R.id.KNN);
+        Button algorithm = (Button) rootView.findViewById(R.id.SVM);
         algorithm.setText(n_algorithm);
 
-        Button algorithm_p = (Button) rootView.findViewById(R.id.KNN_parallel);
+        Button algorithm_p = (Button) rootView.findViewById(R.id.SVM_parallel);
         algorithm_p.setText(n_algorithm + " Paralyzed");
 
         timer=(TextView)this.rootView.findViewById(R.id.timer);

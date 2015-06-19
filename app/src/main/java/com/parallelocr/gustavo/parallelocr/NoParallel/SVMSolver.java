@@ -37,8 +37,8 @@ public class SVMSolver {
     ArrayList<ArrayList<Float>> samples;
     ArrayList<Double> G;
     ArrayList<Double> alpha;
-    ArrayList<Character> alpha_status;
-    ArrayList<Character> y;
+    ArrayList<Float> alpha_status;
+    ArrayList<Float> y;
     ArrayList<Double> b;
     SVMParams params;
     ArrayList<Float> storage;
@@ -53,7 +53,7 @@ public class SVMSolver {
     }
 
     public boolean create(int _sample_count, int _var_count, ArrayList<ArrayList<Float>> _samples,
-                          ArrayList<Character> _y, int _alpha_count, ArrayList<Double> _alpha, double _Cp,
+                          ArrayList<Float> _y, int _alpha_count, ArrayList<Double> _alpha, double _Cp,
                           double _Cn, ArrayList<Float> _storage, SVMKernel _kernel, int _get_row,
                           int _select_working_set, int _calc_rho) throws SVMException {
 
@@ -78,7 +78,7 @@ public class SVMSolver {
         //storage = cvCreateChildMemStorage( _storage );
 
         b = new ArrayList<Double>(alpha_count);
-        alpha_status = new ArrayList<Character>(alpha_count);
+        alpha_status = new ArrayList<Float>(alpha_count);
         G = new ArrayList<Double>(alpha_count);
         for( i = 0; i < 2; i++ )
             buf.set(i, new ArrayList<Float>(sample_count));
@@ -260,11 +260,11 @@ public class SVMSolver {
 
     private void update_alpha_status(int i) {
         if ((alpha.get(i) >= get_C(i))) {
-            alpha_status.set(i, '1');
+            alpha_status.set(i, (float)1);
         } else if (alpha.get(i) <= 0) {
-            alpha_status.set(i, '1');
+            alpha_status.set(i, (float)1);
         } else {
-            alpha_status.set(i, '0');
+            alpha_status.set(i, (float)0);
         }
     }
 
@@ -274,7 +274,7 @@ public class SVMSolver {
 
 
     public boolean solveCSvc(int _sample_count, int _var_count, ArrayList<ArrayList<Float>> _samples,
-                             ArrayList<Character> _y, double _Cp, double _Cn, ArrayList<Float> _storage,
+                             ArrayList<Float> _y, double _Cp, double _Cn, ArrayList<Float> _storage,
                              SVMKernel _kernel, ArrayList<Double> _alpha, SVMSolutionInfo _si ) throws SVMException {
         int i;
 
@@ -300,7 +300,7 @@ public class SVMSolver {
 
 
     public boolean solveNuSvc( int _sample_count, int _var_count, ArrayList<ArrayList<Float>> _samples,
-                               ArrayList<Character> _y, ArrayList<Float> _storage, SVMKernel _kernel,
+                               ArrayList<Float> _y, ArrayList<Float> _storage, SVMKernel _kernel,
                                ArrayList<Double> _alpha, SVMSolutionInfo _si ) throws SVMException {
         int i;
         double sum_pos, sum_neg, inv_r;
@@ -360,7 +360,7 @@ public class SVMSolver {
 
         for( i = 0; i < sample_count; i++ )
         {
-            y.set(i, '1');
+            y.set(i, (float)1);
             b.set(i, 0.);
             alpha.set(i, (i < n ? 1. : 0.));
         }
@@ -375,7 +375,7 @@ public class SVMSolver {
 
 
     public boolean solveEpsSvr( int _sample_count, int _var_count, ArrayList<ArrayList<Float>> _samples,
-                                ArrayList<Character> _y, ArrayList<Float> _storage, SVMKernel _kernel,
+                                ArrayList<Float> _y, ArrayList<Float> _storage, SVMKernel _kernel,
                                 ArrayList<Double> _alpha, SVMSolutionInfo _si ) throws SVMException {
         int i;
         double p = _kernel.getParams().getP(), kernel_param_c = _kernel.getParams().getC();
@@ -394,11 +394,11 @@ public class SVMSolver {
         {
             alpha.set(i, 0.);
             b.set(i, p - _y.get(i));
-            y.set(i, '1');
+            y.set(i, (float)1);
 
             alpha.set(i+sample_count, 0.);
             b.set(i+sample_count, p + _y.get(i));
-            y.set(i+sample_count, '2');
+            y.set(i+sample_count, (float)-1);
         }
 
         if( !solveGeneric(_si))
@@ -412,7 +412,7 @@ public class SVMSolver {
 
 
     public boolean solveNuSvr( int _sample_count, int _var_count, ArrayList<ArrayList<Float>> _samples,
-                               ArrayList<Character> _y, ArrayList<Float> _storage, SVMKernel _kernel,
+                               ArrayList<Float> _y, ArrayList<Float> _storage, SVMKernel _kernel,
                                ArrayList<Double> _alpha, SVMSolutionInfo _si ) throws SVMException {
         int i;
         double kernel_param_c = _kernel.getParams().getC(), sum;
@@ -434,10 +434,10 @@ public class SVMSolver {
             sum -= alpha.get(i);
 
             b.set(i, (double)-_y.get(i));
-            y.set(i, '1');
+            y.set(i, (float) 1);
 
             b.set(i + sample_count, (double)_y.get(i));
-            y.set(i + sample_count, '2');
+            y.set(i + sample_count, (float) -1);
         }
 
         if( !solveGeneric(_si))
@@ -491,12 +491,12 @@ public class SVMSolver {
 
     // private methods ****************************************************************************
 
-    private ArrayList<Character> converter2char(ArrayList<Float> floats) {
-        ArrayList<Character> characters = new ArrayList<Character>();
+    private ArrayList<Float> converter2char(ArrayList<Float> floats) {
+        ArrayList<Float> Floats = new ArrayList<Float>();
         for (int i = 0; i < floats.size(); i++) {
-            characters.add(floats.get(i).toString().charAt(0));
+            Floats.add(floats.get(i));
         }
-        return characters;
+        return Floats;
     }
 
     private ArrayList<Double> converter2double(ArrayList<Float> floats) {
@@ -510,10 +510,10 @@ public class SVMSolver {
     private void clear() {
         G = new ArrayList<Double>();
         alpha = new ArrayList<Double>();
-        y = new ArrayList<Character>();
+        y = new ArrayList<Float>();
         b = new ArrayList<Double>();
-        buf.set(0, new ArrayList<Float>());
-        buf.set(1, new ArrayList<Float>());
+        buf.add(new ArrayList<Float>());
+        buf.add(new ArrayList<Float>());
         kernel = null;
         rows = new ArrayList<SVMKernelRow>();
         samples = new ArrayList<>();
@@ -753,7 +753,7 @@ public class SVMSolver {
     {
         if( !existed )
         {
-            ArrayList<Character> _y = y;
+            ArrayList<Float> _y = y;
             int j, len = sample_count;
 
             if( _y.get(i) > 0 )

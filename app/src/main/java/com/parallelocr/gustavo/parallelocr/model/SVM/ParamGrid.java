@@ -15,7 +15,7 @@ public class ParamGrid {
     public static final int SVM_P = 2;
 
     private static final double DBL_EPSILON = 2.2204460492503131e-16;
-    private static final double FLT_EPSILON = 1.1920929e-07F;
+    public static final double FLT_EPSILON = 1.1920929e-07F;
 
     private double min_val;
     private double max_val;

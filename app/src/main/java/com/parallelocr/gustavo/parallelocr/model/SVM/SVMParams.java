@@ -2,6 +2,8 @@ package com.parallelocr.gustavo.parallelocr.model.SVM;
 
 import com.parallelocr.gustavo.parallelocr.NoParallel.SVM;
 
+import java.util.ArrayList;
+
 /**
  * Created by gustavo on 19/04/15.
  */
@@ -16,7 +18,7 @@ public class SVMParams {
     private double p;
     private int svm_type;
     private TermCriteria term_crit;
-    private float[] class_weight;
+    private ArrayList<Float> class_weight;
 
     //Constructors
     public SVMParams(){
@@ -31,8 +33,10 @@ public class SVMParams {
         this.term_crit = new TermCriteria(TermCriteria.MAX_ITER+TermCriteria.EPS,1000,Math.E);
     }
 
-    public SVMParams(double C, double coef0, double degree, double gamma, int kernel_type, double nu,
-                     double p, int svm_type, TermCriteria term_crit){
+    public SVMParams(int svm_type, int kernel_type,
+                     double degree, double gamma, double coef0,
+                     double C, double nu, double p,
+                     ArrayList<Float> class_weights, TermCriteria term_crit ){
         this.C = C;
         this.coef0 = coef0;
         this.degree = degree;
@@ -42,6 +46,7 @@ public class SVMParams {
         this.p = p;
         this.svm_type = svm_type;
         this.term_crit = term_crit;
+        this.class_weight = class_weights;
     }
 
     /**
@@ -188,11 +193,11 @@ public class SVMParams {
         this.term_crit = term_crit;
     }
 
-    public float[] getClass_weight() {
+    public ArrayList<Float> getClass_weight() {
         return class_weight;
     }
 
-    public void setClass_weight(float[] class_weight) {
+    public void setClass_weight(ArrayList<Float> class_weight) {
         this.class_weight = class_weight;
     }
 }

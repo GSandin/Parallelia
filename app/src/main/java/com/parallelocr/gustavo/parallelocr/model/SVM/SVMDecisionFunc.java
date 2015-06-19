@@ -16,6 +16,10 @@ public class SVMDecisionFunc {
         this.setSv_index(sv_index);
     }
 
+    public SVMDecisionFunc() {
+
+    }
+
     public double getRho() {
         return rho;
     }

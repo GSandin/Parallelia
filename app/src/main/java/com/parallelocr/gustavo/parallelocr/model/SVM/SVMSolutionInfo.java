@@ -18,6 +18,10 @@ public class SVMSolutionInfo {
         this.setR(r);
     }
 
+    public SVMSolutionInfo() {
+
+    }
+
     public double getObj() {
         return obj;
     }

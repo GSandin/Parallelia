@@ -9,6 +9,7 @@ import android.view.View;
 import com.parallelocr.gustavo.parallelocr.R;
 import com.parallelocr.gustavo.parallelocr.controller.ClassifierKNN;
 import com.parallelocr.gustavo.parallelocr.controller.ClassifierKNNP;
+import com.parallelocr.gustavo.parallelocr.controller.ClassifierSVM;
 import com.parallelocr.gustavo.parallelocr.view.Fragment.ParallelPagerAdapter;
 import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideSVMFragment;
 import com.parallelocr.gustavo.parallelocr.view.Fragment.ScreenSlideKNNFragment;
@@ -105,6 +106,17 @@ public class MainParallelia extends FragmentActivity{
         ParallelPagerAdapter adapter = (ParallelPagerAdapter) pager.getAdapter();
         ScreenSlideKNNFragment fragment = (ScreenSlideKNNFragment)adapter.getItem(0);
         ClassifierKNNP c = new ClassifierKNNP(fragment,2);
+        c.execute(this);
+    }
+
+    /**
+     * Method to run the SVM without paralyze
+     * @param v
+     */
+    public void SVM(View v){
+        ParallelPagerAdapter adapter = (ParallelPagerAdapter) pager.getAdapter();
+        ScreenSlideSVMFragment fragment = (ScreenSlideSVMFragment)adapter.getItem(1);
+        ClassifierSVM c = new ClassifierSVM(fragment);
         c.execute(this);
     }
 }
