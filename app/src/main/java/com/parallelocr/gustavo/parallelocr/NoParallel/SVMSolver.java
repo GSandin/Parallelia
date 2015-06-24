@@ -49,6 +49,7 @@ public class SVMSolver {
     public SVMSolver() {
         this.storage = new ArrayList<Float>();
         this.buf = new ArrayList<ArrayList<Float>>(2);
+        lru_list = new SVMKernelRow();
         clear();
     }
 
@@ -103,7 +104,11 @@ public class SVMSolver {
         lru_list.setPrev(lru_list);
         lru_list.setNext(lru_list);
 
-        rows = new ArrayList<SVMKernelRow>(rows_hdr_size);
+        rows = new ArrayList<SVMKernelRow>();
+        System.out.println("gfasgs " + rows_hdr_size);
+        for (int j = 0; j < rows_hdr_size; j++) {
+            rows.add(new SVMKernelRow());
+        }
         //ini rows
 
         ok = true;
@@ -710,6 +715,7 @@ public class SVMSolver {
     private ArrayList<Float> getRowBase(int i, boolean _existed )
     {
         int i1 = i < sample_count ? i : i - sample_count;
+        System.out.println(i);
         SVMKernelRow row = rows.get(i1);
         boolean existed = row.getData() != null;
         ArrayList<Float> data;

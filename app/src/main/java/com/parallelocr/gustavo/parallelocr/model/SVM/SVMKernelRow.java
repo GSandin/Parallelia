@@ -16,6 +16,10 @@ public class SVMKernelRow {
         this.setData(data);
     }
 
+    public SVMKernelRow() {
+
+    }
+
     public SVMKernelRow getPrev() {
         return prev;
     }

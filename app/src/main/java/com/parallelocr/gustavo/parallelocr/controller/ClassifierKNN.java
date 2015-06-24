@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.parallelocr.gustavo.parallelocr.NoParallel.KNN;
 import com.parallelocr.gustavo.parallelocr.R;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 public class ClassifierKNN extends AsyncTask<Context,Void,Void> {
 
     private ScreenSlideKNNFragment fragment;
+    private Context context;
+    private float avg;
 
     public ClassifierKNN(ScreenSlideKNNFragment fragment){
         this.fragment = fragment;
@@ -26,6 +29,7 @@ public class ClassifierKNN extends AsyncTask<Context,Void,Void> {
 
     @Override
     protected Void doInBackground(Context... context) {
+        this.context = context[0];
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
         Bitmap img = BitmapFactory.decodeResource(context[0].getResources(), R.drawable.digits, options);
@@ -58,8 +62,8 @@ public class ClassifierKNN extends AsyncTask<Context,Void,Void> {
             }
 
             try {
-                int avg = verify(cl.find_nearest(5, images_test));
-                System.out.println(avg*100/2500);
+                int temp = verify(cl.find_nearest(5, images_test));
+                this.avg = temp*100/2500;
             } catch (KNNException e) {
                 e.printStackTrace();
             }
@@ -76,6 +80,9 @@ public class ClassifierKNN extends AsyncTask<Context,Void,Void> {
     @Override
     protected void onPostExecute(Void result) {
         fragment.finishTimer();
+        Toast.makeText(context,
+                "KNN testeado exito del " + avg + "%",
+                Toast.LENGTH_LONG).show();
     }
 
     /**

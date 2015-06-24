@@ -9,6 +9,9 @@ import com.parallelocr.gustavo.parallelocr.model.SVM.SVMSolutionInfo;
 import com.parallelocr.gustavo.parallelocr.model.SVM.SampleResponsePair;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by gustavo on 5/04/15.
@@ -37,7 +40,7 @@ public class SVM {
     float[][] sv;
     int sv_total;
     ArrayList var_idx;
-    ArrayList<ArrayList<Float>> class_labels;
+    ArrayList<Float> class_labels;
     ArrayList<Float> class_weights;
     ArrayList<SVMDecisionFunc> decision_func;
     ArrayList<Float> storage;
@@ -226,8 +229,7 @@ public class SVM {
     // switching function
     public boolean train1( int sample_count, int var_count, ArrayList<ArrayList<Float>> samples,
                         ArrayList<Float>_responses, double Cp, double Cn,
-                        ArrayList<Float> _storage, ArrayList<Double> alpha,double rho )
-    {
+                        ArrayList<Float> _storage, ArrayList<Double> alpha, SVMDecisionFunc decision ) {
         boolean ok = false;
 
         SVMSolutionInfo si = new SVMSolutionInfo();
@@ -246,7 +248,7 @@ public class SVM {
         } catch (SVMException ex) {
 
         }
-        rho = si.getRho();
+        decision.setRho(si.getRho());
 
         return ok;
     }
@@ -269,7 +271,7 @@ public class SVM {
 
             df.setRho(0.);
             if( !train1( sample_count, var_count, samples, svm_type == ONE_CLASS ? null :
-                    responses, 0, 0, temp_storage, alpha, df.getRho() ))
+                    responses, 0, 0, temp_storage, alpha, df ))
                 return false;
 
             for( i = 0; i < sample_count; i++ ) {
@@ -296,7 +298,8 @@ public class SVM {
         }
         else
         {
-            int class_count = class_labels.size();
+            int class_count = 9;
+            System.out.println(class_count);
             ArrayList<Integer>  sv_tab;
             ArrayList<ArrayList<Float>> temp_samples;
             ArrayList<Integer> class_ranges;
@@ -311,25 +314,24 @@ public class SVM {
             }
 
             decision_func = new ArrayList<SVMDecisionFunc>(class_count*(class_count-1)/2);
-            ArrayList<SVMDecisionFunc> df = new ArrayList<SVMDecisionFunc>(class_count*(class_count-1)/2);
+            ArrayList<SVMDecisionFunc> df = new ArrayList<SVMDecisionFunc>();
+            for (int l = 0; l < class_count*(class_count-1)/2; l++) {
+                df.add(new SVMDecisionFunc());
+            }
 
             sv_tab = new ArrayList<Integer>();
 
-            class_ranges = new ArrayList<Integer>();
+            class_ranges = new ArrayList<Integer>(class_count + 1);
             temp_samples = new ArrayList<ArrayList<Float>>(sample_count);
             temp_y = new ArrayList<Float>(sample_count);
 
             class_ranges.add(0);
-            System.out.println("hola1");
             sortSamplesByClasses( samples, responses, class_ranges, null );
-            System.out.println("hola4");
             //check that while cross-validation there were the samples from all the classes
             if( class_ranges.get(class_count) <= 0 )
                 throw new SVMException("While cross-validation one or more of the classes have " +
                         "been fell out of the sample. Try to enlarge <CvSVMParams::k_fold>" );
 
-
-            System.out.println("hola5");
             if( svm_type == NU_SVC )
             {
                 // check if nu is feasible
@@ -347,8 +349,6 @@ public class SVM {
                 }
             }
 
-
-            System.out.println("hola2");
 
             // train n*(n-1)/2 classifiers
             for( i = 0; i < class_count; i++ )
@@ -370,13 +370,13 @@ public class SVM {
                         temp_y.set(ci + k, (float)-1);
                     }
 
-                    if( class_weights != null) {
+                    if( class_weights != null && !class_weights.isEmpty()) {
                         Cp = class_weights.get(j);
                         Cn = class_weights.get(j);
                     }
 
                     if( !train1(ci + cj, var_count, temp_samples, temp_y,
-                            Cp, Cn, temp_storage, alpha, df.get(j).getRho()))
+                            Cp, Cn, temp_storage, alpha, df.get(j)))
                         return false;
 
                     for( k = 0; k < ci + cj; k++ ) {
@@ -411,9 +411,6 @@ public class SVM {
                     }
                 }
             }
-
-
-            System.out.println("hola3");
 
             // allocate support vectors and initialize sv_tab
             for( i = 0, k = 0; i < sample_count; i++ )
@@ -529,6 +526,7 @@ public class SVM {
         sample_count = this.get_var_count();
         var_count = this.get_var_count();
 
+
         // make the storage block size large enough to fit all
         // the temporary vectors and output support vectors.
         block_size = Math.max(block_size, sample_count);
@@ -538,6 +536,17 @@ public class SVM {
         storage = new ArrayList<Float>(block_size);
         temp_storage = storage;
         alpha = new ArrayList<Double>(sample_count);
+        class_labels = new ArrayList<Float>();
+        class_labels.add((float) 0);
+        class_labels.add((float) 1);
+        class_labels.add((float) 2);
+        class_labels.add((float) 3);
+        class_labels.add((float) 4);
+        class_labels.add((float) 5);
+        class_labels.add((float) 6);
+        class_labels.add((float) 7);
+        class_labels.add((float) 8);
+        class_labels.add((float) 9);
 
         createKernel();
         createSolver();
@@ -565,7 +574,7 @@ public class SVM {
         kernel = new SVMKernel();
         solver = new SVMSolver();
         storage = new ArrayList<Float>();
-        class_labels = new ArrayList<ArrayList<Float>>();
+        class_labels = new ArrayList<Float>(9);
         var_idx = new ArrayList();
         class_weights = new ArrayList();
     }
@@ -620,54 +629,46 @@ public class SVM {
         int i, k = 0, sample_count;
         if( samples == null || classes == null || class_ranges == null )
             throw new SVMException("INTERNAL ERROR: some of the args are NULL pointers" );
-        if( classes.size() != 1 )
+        if( classes.size() <= 1 )
             throw new SVMException("classes array must be a single row of integers" );
         sample_count = classes.size();
 
         pairs = new ArrayList<SampleResponsePair>(sample_count+1);
 
         for( i = 0; i < sample_count; i++ ) {
-            pairs.get(i).setSample(samples.get(i));
-            pairs.get(i).setMask((mask != null) ? (mask.get(i)) : null);
-            pairs.get(i).setResponse(classes.get(i));
-            pairs.get(i).setIndex(i);
+            SampleResponsePair srp = new SampleResponsePair();
+            srp.setSample(samples.get(i));
+            srp.setMask(((mask != null) ? (mask.get(i)) : null));
+            srp.setResponse(classes.get(i));
+            srp.setIndex(i);
+            pairs.add(srp);
         }
 
-        quicksort(pairs, 0, sample_count);
-        pairs.get(sample_count).setResponse(-1);
-        class_ranges.set(0, 0);
-        for( i = 0; i < sample_count; i++ ) {
+        Collections.sort(pairs, new Comparator<SampleResponsePair>() {
+            @Override
+            public int compare(SampleResponsePair response1, SampleResponsePair response2) {
+
+                if(response1.getResponse() > response2.getResponse()) {
+                    return 1;
+                } else if(response1.getResponse() < response2.getResponse()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        pairs.get(sample_count-1).setResponse(-1);
+        class_ranges.add(0);
+        for( i = 0; i < sample_count-1; i++ ) {
             samples.set(i, pairs.get(i).getSample());
             if (mask != null)
                 mask.set(i, pairs.get(i).getMask());
             classes.set(i, pairs.get(i).getResponse());
             if( pairs.get(i).getResponse() != pairs.get(i+1).getResponse() )
-                class_ranges.set(++k,  i+1);
+                class_ranges.add(i + 1);
         }
 
     }
 
-    public static void quicksort(ArrayList<SampleResponsePair> A, int izq, int der) {
-
-        int pivote = (int)A.get(izq).getResponse();
-        int i=izq;
-        int j=der;
-        SampleResponsePair aux;
-
-        while(i<j){
-            while(A.get(i).getResponse() <= pivote && i < j ) i++;
-            while(A.get(j).getResponse() > pivote) j--;
-            if ( i < j ) {
-                aux = A.get(i);
-                A.set(i, A.get(j));
-                A.set(j, aux);
-            }
-        }
-        A.set(izq, A.get(j));
-        A.set(j, A.get(pivote));
-        if(izq<j-1)
-            quicksort(A,izq,j-1);
-        if(j+1 <der)
-            quicksort(A,j+1,der);
-    }
 }

@@ -58,7 +58,7 @@ public class ClassifierSVM extends AsyncTask<Context,Void,Void> {
 
         try {
             if (cl.train(converter2list(images_data), converter2list(responses), null, null, params)) {
-                System.out.println("KNN entrenado");
+                System.out.println("SVM entrenado");
                 ArrayList<KNNVector> images_test = new ArrayList<KNNVector>(50 * 50);
 
                 for (int i = 0; i < img.getHeight(); i += 20) {
