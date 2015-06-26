@@ -97,9 +97,6 @@ public class ScreenSlideSVMFragment extends Fragment {
         Button algorithm = (Button) rootView.findViewById(R.id.SVM);
         algorithm.setText(n_algorithm);
 
-        Button algorithm_p = (Button) rootView.findViewById(R.id.SVM_parallel);
-        algorithm_p.setText(n_algorithm + " Paralyzed");
-
         timer=(TextView)this.rootView.findViewById(R.id.timer);
 
         return rootView;

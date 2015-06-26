@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.parallelocr.gustavo.parallelocr.NoParallel.KNN;
 import com.parallelocr.gustavo.parallelocr.NoParallel.SVM;
@@ -77,7 +78,10 @@ public class ClassifierSVM extends AsyncTask<Context,Void,Void> {
 
             }
         } catch (SVMException ex) {
-
+            Toast.makeText(context[0],
+                    ex.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            System.out.println(ex);
         }
         return null;
     }

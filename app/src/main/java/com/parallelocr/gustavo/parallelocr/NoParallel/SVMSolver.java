@@ -76,11 +76,16 @@ public class SVMSolver {
 
         eps = kernel.getParams().getTerm_crit().getEpsilon();
         max_iter = kernel.getParams().getTerm_crit().getMaxCount();
-        //storage = cvCreateChildMemStorage( _storage );
+        storage = _storage ;
 
-        b = new ArrayList<Double>(alpha_count);
-        alpha_status = new ArrayList<Float>(alpha_count);
-        G = new ArrayList<Double>(alpha_count);
+        b = new ArrayList<Double>();
+        alpha_status = new ArrayList<Float>();
+        G = new ArrayList<Double>();
+        for (int n = 0; n < alpha_count; n++) {
+            b.add(0.);
+            alpha_status.add((float)0.);
+            G.add(0.);
+        }
         for( i = 0; i < 2; i++ )
             buf.set(i, new ArrayList<Float>(sample_count));
         svm_type = kernel.getParams().getSvm_type();
@@ -98,6 +103,7 @@ public class SVMSolver {
 
         // the size of Q matrix row headers
         rows_hdr_size = sample_count;
+        System.out.println(rows_hdr_size + " - " + storage.size());
         if( rows_hdr_size > storage.size() )
             throw new SVMException("Too small storage block size");
 
@@ -204,7 +210,7 @@ public class SVMSolver {
             else
             {
                 double denom = Q_i.get(i) + Q_j.get(j) - 2 * Q_i.get(j);
-                double delta = (G.get(i) - G.get(j)) / Math.max(Math.abs(denom), FLT_EPSILON);
+                double delta = (G.get(i-1) - G.get(j-1)) / Math.max(Math.abs(denom), FLT_EPSILON);
                 double sum = alpha_i + alpha_j;
                 alpha_i -= delta;
                 alpha_j += delta;
@@ -235,8 +241,8 @@ public class SVMSolver {
             // update alpha
             alpha.set(i, alpha_i);
             alpha.set(j, alpha_j);
-            update_alpha_status(i);
-            update_alpha_status(j);
+            update_alpha_status(i-1);
+            update_alpha_status(j-1);
 
             // update G
             delta_alpha_i = alpha_i - old_alpha_i;
@@ -715,7 +721,6 @@ public class SVMSolver {
     private ArrayList<Float> getRowBase(int i, boolean _existed )
     {
         int i1 = i < sample_count ? i : i - sample_count;
-        System.out.println(i);
         SVMKernelRow row = rows.get(i1);
         boolean existed = row.getData() != null;
         ArrayList<Float> data;

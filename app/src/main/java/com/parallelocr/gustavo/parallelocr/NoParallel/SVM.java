@@ -244,9 +244,9 @@ public class SVM {
                     ONE_CLASS ? solver.solveOneClass(sample_count, var_count, samples, _storage, kernel, alpha, si) :
                     svm_type == EPS_SVR ? solver.solveEpsSvr(sample_count, var_count, samples, _responses,
                     _storage, kernel, alpha, si): svm_type == NU_SVR ? solver.solveNuSvr(sample_count,
-                    var_count, samples, _responses, _storage, kernel, alpha, si):false;
+                    var_count, samples, _responses, _storage, kernel, alpha, si) : false;
         } catch (SVMException ex) {
-
+            System.out.println(ex);
         }
         decision.setRho(si.getRho());
 
@@ -302,7 +302,7 @@ public class SVM {
             System.out.println(class_count);
             ArrayList<Integer>  sv_tab;
             ArrayList<ArrayList<Float>> temp_samples;
-            ArrayList<Integer> class_ranges;
+            int[] class_ranges;
             ArrayList<Float> temp_y;
 
             if( svm_type == C_SVC && params.getClass_weight() != null )
@@ -321,14 +321,19 @@ public class SVM {
 
             sv_tab = new ArrayList<Integer>();
 
-            class_ranges = new ArrayList<Integer>(class_count + 1);
-            temp_samples = new ArrayList<ArrayList<Float>>(sample_count);
-            temp_y = new ArrayList<Float>(sample_count);
+            class_ranges = new int[class_count + 1];
+            temp_samples = new ArrayList<ArrayList<Float>>();
+            temp_y = new ArrayList<Float>();
+            System.out.println(sample_count);
+            for (int n = 0; n < sample_count; n++) {
+                temp_samples.add(new ArrayList<Float>());
+                temp_y.add((float)0.);
+            }
 
-            class_ranges.add(0);
+            class_ranges[class_count] = 0;
             sortSamplesByClasses( samples, responses, class_ranges, null );
             //check that while cross-validation there were the samples from all the classes
-            if( class_ranges.get(class_count) <= 0 )
+            if( class_ranges[class_count] <= 0 )
                 throw new SVMException("While cross-validation one or more of the classes have " +
                         "been fell out of the sample. Try to enlarge <CvSVMParams::k_fold>" );
 
@@ -337,10 +342,10 @@ public class SVM {
                 // check if nu is feasible
                 for(i = 0; i < class_count; i++ )
                 {
-                    int ci = class_ranges.get(i+1) - class_ranges.get(i);
+                    int ci = class_ranges[i+1] - class_ranges[i];
                     for( j = i+1; j< class_count; j++ )
                     {
-                        int cj = class_ranges.get(j+1) - class_ranges.get(j);
+                        int cj = class_ranges[j+1] - class_ranges[j];
                         if( params.getNu()*(ci + cj)*0.5 > Math.min( ci, cj ) )
                         {
                             return false; // exit immediately; will release the model and return NULL pointer
@@ -355,8 +360,8 @@ public class SVM {
             {
                 for( j = i+1; j < class_count; j++ )
                 {
-                    int si = class_ranges.get(i), ci = class_ranges.get(i+1) - si;
-                    int sj = class_ranges.get(j), cj = class_ranges.get(i+1) - sj;
+                    int si = class_ranges[i], ci = class_ranges[i+1] - si;
+                    int sj = class_ranges[j], cj = class_ranges[i+1] - sj;
                     double Cp = params.getC(), Cn = Cp;
                     int k1 = 0, sv_count = 0;
 
@@ -375,9 +380,11 @@ public class SVM {
                         Cn = class_weights.get(j);
                     }
 
+                    System.out.println("hola");
                     if( !train1(ci + cj, var_count, temp_samples, temp_y,
-                            Cp, Cn, temp_storage, alpha, df.get(j)))
+                            Cp, Cn, temp_storage, alpha, df.get(j))) {
                         return false;
+                    }
 
                     for( k = 0; k < ci + cj; k++ ) {
                         if (Math.abs(alpha.get(k)) > 0) {
@@ -510,7 +517,6 @@ public class SVM {
                           ArrayList<Float> _var_idx, ArrayList<Float> _sample_idx, SVMParams _params ) throws SVMException {
         boolean ok = false;
         ArrayList<Float> responses = _responses;
-        ArrayList<Float> temp_storage;
         ArrayList<ArrayList<Float>> samples = _train_data;
 
         int svm_type, sample_count, var_count, sample_size;
@@ -522,9 +528,9 @@ public class SVM {
 
         svm_type = _params.getSvm_type();
 
-        sample_size = this.get_var_count();
-        sample_count = this.get_var_count();
-        var_count = this.get_var_count();
+        sample_size = samples.size();
+        sample_count = samples.size();
+        var_count = samples.get(0).size();
 
 
         // make the storage block size large enough to fit all
@@ -533,9 +539,14 @@ public class SVM {
         block_size = Math.max(block_size, sample_count * 2 + 1024 );
         block_size = Math.max(block_size, sample_size * 2 + 1024);
 
-        storage = new ArrayList<Float>(block_size);
-        temp_storage = storage;
-        alpha = new ArrayList<Double>(sample_count);
+        storage = new ArrayList<Float>();
+        for (int i = 0; i < block_size; i++) {
+            storage.add((float)0.);
+        }
+        alpha = new ArrayList<Double>();
+        for (int i = 0; i < sample_count; i++) {
+            alpha.add(0.);
+        }
         class_labels = new ArrayList<Float>();
         class_labels.add((float) 0);
         class_labels.add((float) 1);
@@ -551,7 +562,7 @@ public class SVM {
         createKernel();
         createSolver();
 
-        if( !do_train( svm_type, sample_count, var_count, samples, responses, temp_storage, alpha ))
+        if( !do_train( svm_type, sample_count, var_count, samples, responses, storage, alpha ))
             return false;
 
         ok = true; // model has been trained successfully
@@ -622,7 +633,7 @@ public class SVM {
     }
 
     private void sortSamplesByClasses( ArrayList<ArrayList<Float>> samples, ArrayList<Float> classes,
-                                       ArrayList<Integer> class_ranges, ArrayList<ArrayList<Float>> mask) throws SVMException {
+                                       int[] class_ranges, ArrayList<ArrayList<Float>> mask) throws SVMException {
 
         ArrayList<SampleResponsePair> pairs;
 
@@ -633,7 +644,7 @@ public class SVM {
             throw new SVMException("classes array must be a single row of integers" );
         sample_count = classes.size();
 
-        pairs = new ArrayList<SampleResponsePair>(sample_count+1);
+        pairs = new ArrayList<SampleResponsePair>();
 
         for( i = 0; i < sample_count; i++ ) {
             SampleResponsePair srp = new SampleResponsePair();
@@ -659,14 +670,14 @@ public class SVM {
         });
 
         pairs.get(sample_count-1).setResponse(-1);
-        class_ranges.add(0);
+        class_ranges[0] = 0;
         for( i = 0; i < sample_count-1; i++ ) {
             samples.set(i, pairs.get(i).getSample());
             if (mask != null)
                 mask.set(i, pairs.get(i).getMask());
             classes.set(i, pairs.get(i).getResponse());
             if( pairs.get(i).getResponse() != pairs.get(i+1).getResponse() )
-                class_ranges.add(i + 1);
+                class_ranges[k++] = i + 1;
         }
 
     }
